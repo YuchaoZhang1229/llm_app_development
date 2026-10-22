@@ -80,7 +80,12 @@ async def delete_todos(todo_id: int):
     del todos_dict[todo_id]
     return "删除成功"
 
-# POST: http://localhost:8000/todos?title=router&priority=1
+# POST: http://localhost:8000/todos?title=xxx&priority=3
+# GET: http://localhost:8000/todos
+# GET: http://localhost:8000/todos?priority=3
+# GET: http://localhost:8000/todos/7
+# PUT: http://localhost:8000/todos/7?title=aaa&priority=1
+# DELETE: http://localhost:8000/todos/7
 
 if __name__ == "__main__":
     import uvicorn
