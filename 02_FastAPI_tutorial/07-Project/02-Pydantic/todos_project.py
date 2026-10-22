@@ -89,7 +89,7 @@ async def delete_todos(todo_id: int):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("todos_project_pydantic:app", host=settings.host, port=settings.port, reload=settings.reload)
+    uvicorn.run("todos_project:app", host=settings.host, port=settings.port, reload=settings.reload)
 
 
 """
