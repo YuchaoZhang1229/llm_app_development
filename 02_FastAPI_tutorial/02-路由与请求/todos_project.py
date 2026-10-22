@@ -82,3 +82,6 @@ async def delete_todos(todo_id: int):
 
 # POST: http://localhost:8000/todos?title=router&priority=1
 
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("todos_project:app", host="127.0.0.1", port=8000, reload=True)
