@@ -65,6 +65,8 @@ app.include_router(users.router)
 
 ![用户注册流程.png](流程图/用户注册流程.png)
 
+> **用户注册逻辑**：通过 username 验证用户是否存在 -> 创建用户 -> 生成 Token -> 响应结果（token+user_info）
+
 #### passlib 密码加密
 安装
 ```bash
@@ -95,7 +97,7 @@ Token在请求中的位置：`请求头`
 - `Bearer`：表示"持有者令牌"
 - `<token>`: 真正的身份凭证(后端生成)
 
-> **用户注册逻辑**：通过 username 验证用户是否存在 -> 创建用户 -> 生成 Token -> 响应结果（token+user_info）
+
 
 ```python
 # 生成 Token
