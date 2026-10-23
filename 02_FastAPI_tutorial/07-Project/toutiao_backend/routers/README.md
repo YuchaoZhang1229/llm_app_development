@@ -57,8 +57,11 @@ app.include_router(users.router)
 ### 1. 用户注册
 - 接口地址：`POST /api/user/register`
 - 请求参数：（Pydantic UserRequest -> 请求体）
-   - username：str，必填
-   - password：str，必填
+
+| 参数名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| username | string | 是 | 用户名 |
+| password | string | 是 | 密码 |
 
 ![用户注册流程.png](流程图/用户注册流程.png)
 
@@ -92,6 +95,8 @@ Token在请求中的位置：`请求头`
 - `Bearer`：表示"持有者令牌"
 - `<token>`: 真正的身份凭证(后端生成)
 
+> **用户注册逻辑**：通过 username 验证用户是否存在 -> 创建用户 -> 生成 Token -> 响应结果（token+user_info）
+
 ```python
 # 生成 Token
 async def create_token(db: AsyncSession, user_id: int):
@@ -116,10 +121,15 @@ async def create_token(db: AsyncSession, user_id: int):
 ### 2. 用户登录
 - 接口地址：`POST /api/user/login`
 - 请求参数：（Pydantic UserRequest -> 请求体）
-  - username：str，必填
-  - password：str，必填
+
+| 参数名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| username | string | 是 | 用户名 |
+| password | string | 是 | 密码 |
 
 ![用户登录流程.png](流程图/用户登录流程.png)
+
+> **用户登录逻辑**：通过 username 验证用户是否存在并验证密码 -> 生成 Token -> 响应结果（token+user_info）
 
 ### 3. 用户信息获取
 - 接口地址：`GET /api/user/info`
@@ -131,11 +141,27 @@ async def create_token(db: AsyncSession, user_id: int):
 > `后续用户信息更新，用户密码修改，都需要用这个函数，所以抽取出一个公共函数 auth.py`
 
 ### 4. 用户信息更新
+- 接口地址：`PUT /api/user/info`
+- 请求头：需要认证
+- 请求参数：（Pydantic UserInfoResponse -> 请求体）
 
-
+| 参数名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| nickname | string | 否 | 昵称 |
+| avatar | string | 否 | 头像URL |
+| gender | string | 否 | 性别 |
+| bio | string | 否 | 个人简介 |
+| phone | string | 否 | 手机号 |
 
 ### 5. 用户密码修改
+- 接口地址：`PUT /api/user/password`
+- 请求头：需要认证
+- 请求参数：（Pydantic UserInfoResponse -> 请求体）
 
+| 参数名 | 类型 | 必填 | 说明 |
+|--------|------|------|------|
+| oldPassword | string | 是 | 当前密码 |
+| newPassword | string | 是 | 新密码 |
 
 ## 跨域资源共享 CORS
 - 跨域资源共享（CORS）是一种浏览器基于`同源`策略的安全机制，默认会阻止网页向不同源的服务器发起请求
