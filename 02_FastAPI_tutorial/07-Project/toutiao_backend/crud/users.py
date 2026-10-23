@@ -2,13 +2,13 @@ import uuid
 from datetime import timedelta, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, update
 from models.users import User, UserToken
-from schemas.users import UserRequest
+from schemas.users import UserRequest, UserUpdateRequest
 from utils import security
 
 
-# 根据用户名查询数据库
+# 根据 username 查询用户
 async def get_user_by_username(db: AsyncSession, username: str):
     query = select(User).where(User.username == username)
     result = await db.execute(query)
@@ -42,6 +42,44 @@ async def create_token(db: AsyncSession, user_id: int):
         db.add(user_token)
         await db.commit()
     return token
+
+# 根据 id 查询用户
+async def get_user_by_id(db: AsyncSession, user_id):
+    query = select(User).where(User.id == user_id)
+    result = await db.execute(query)
+    return  result.scalar_one_or_none()
+
+# 根据 Token 查询用户：查询 Token -> 验证 Token 是否过期 -> 查询用户 -> 返回用户信息
+async def get_user_by_token(db: AsyncSession, token: str):
+    # 1. 查询 Token
+    query = select(UserToken).where(UserToken.token == token)
+    result = await db.execute(query)
+    user_token = result.scalar_one_or_none()
+    # 2. 验证 Token 是否过期
+    if user_token and user_token.expires_at > datetime.now():
+        return await get_user_by_id(db, user_token.user_id)
+    else:
+        return None
+
+# 更新用户信息
+async def update_user(db: AsyncSession, username: str, user_data: UserUpdateRequest):
+    # model_dump: Pydantic -> dict
+    update_data = user_data.model_dump(exclude_unset=True, exclude_none=True) # 字段没传或None的值不更新
+
+    # 先确认用户存在，避免依赖 rowcount 的不可靠行为
+    user = await get_user_by_username(db, username)
+    if user is None:
+        return None
+    if not update_data:
+        return user
+
+    # **dict：dict -> 字段=值, 字段=值, ...
+    query = update(User).where(User.username == username).values(**update_data)
+    await db.execute(query)
+    await db.commit()
+    await db.refresh(user)
+    return user
+
 
 
 if __name__ == "__main__":

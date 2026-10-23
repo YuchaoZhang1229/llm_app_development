@@ -173,6 +173,8 @@ async def get_current_user(
 | bio | string | 否 | 个人简介 |
 | phone | string | 否 | 手机号 |
 
+![修改用户信息流程.png](流程图/修改用户信息流程.png)
+
 ### 5. 用户密码修改
 - 接口地址：`PUT /api/user/password`
 - 请求头：需要认证
@@ -182,6 +184,8 @@ async def get_current_user(
 |--------|------|------|------|
 | oldPassword | string | 是 | 当前密码 |
 | newPassword | string | 是 | 新密码 |
+
+![用户修改密码流程.png](流程图/用户修改密码流程.png)
 
 ## 跨域资源共享 CORS
 - 跨域资源共享（CORS）是一种浏览器基于`同源`策略的安全机制，默认会阻止网页向不同源的服务器发起请求
