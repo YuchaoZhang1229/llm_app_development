@@ -14,11 +14,11 @@ def common_params(
 
 @app.get("/item/item_list")
 def get_item_list(commons: dict = Depends(common_params)):
-    return {"commons": commons}
+    return {"skip": commons.get("skip"), "limit": commons.get("limit")}
 
 @app.get("/user/user_list")
 def get_user_list(commons: dict = Depends(common_params)):
-    return {"commons": commons}
+    return {"skip": commons.get("skip"), "limit": commons.get("limit")}
 
 if __name__ == "__main__":
     import uvicorn
