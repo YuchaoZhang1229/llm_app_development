@@ -11,13 +11,13 @@
     ↓
 [依赖注入层 - 第一章 + 第三章]
     ├── oauth2_scheme：提取 Token
-    ├── get_current_user：解析 Token → 查数据库（第四章）
+    ├── get_current_user：解析 Token → 查数据库（06-数据库集成）
     ├── get_current_active_user：检查用户状态
     └── require_role：检查角色权限
     ↓
 [路由函数]
-    ├── get_db：创建数据库会话（第四章的 yield 依赖）
-    ├── pagination_params：解析分页参数（第一章的泛型依赖）
+    ├── get_db：创建数据库会话（03-依赖注入-yield 依赖）
+    ├── pagination_params：解析分页参数
     └── 执行业务逻辑（CRUD 操作）
     ↓
 [中间件层 - 后置]
