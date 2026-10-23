@@ -158,6 +158,8 @@ async def get_current_user(
     return user
 ```
 
+![用户信息获取示例.png](流程图/用户信息获取示例.png)
+
 ### 4. 用户信息更新
 - 接口地址：`PUT /api/user/info`
 - 请求头：需要认证
