@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 requires-python = ">=3.12"
 dependencies = [
+    "aiomysql>=0.3.2",
     "arxiv==2.3.0",
     "chromadb>=1.5.9",
     "dashscope>=1.27.7",
@@ -33,12 +34,15 @@ dependencies = [
     "notebook>=7.6.3",
     "ollama>=0.6.3",
     "openai>=3.22.1",
+    "passlib[bcrypt]>=1.7.4",
+    "pwdlib[argon2]>=0.3.1",
     "pydantic[email]>=2.11.10",
     "pymupdf>=1.28.2",
     "python-dotenv>=1.2.4",
     "pyvis>=0.3.2",
     "redis>=8.1.0",
     "sentence-transformers>=6.1.0",
+    "sqlalchemy[asyncio]>=2.1.5",
     "sse-starlette>=3.5.0",
     "tabulate>=0.10.0",
     "uvicorn>=0.54.0",
