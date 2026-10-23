@@ -140,7 +140,23 @@ async def create_token(db: AsyncSession, user_id: int):
 ![用户信息获取流程.png](流程图/用户信息获取流程.png)
 
 > 用户已经登录的情况下，前端在发送请求的时候会在请求头中携带 Token，后端通过 Token 获取用户信息 <br>
-> 函数：`根据 Token 查询用户 (检查 Token 是否国企，查询对应用户)` 后续用户信息更新，用户密码修改，都需要用这个函数，所以抽取出一个公共函数
+> 函数：`获取 Token + 根据 Token 查询用户 (查询 Token -> 检查 Token 是否过期 -> 查询对应用户)` 后续用户信息更新，用户密码修改，都需要用这个函数，所以抽取出一个公共函数 auth.py
+
+/utils/auth.py
+```python
+async def get_current_user(
+        authorization: str = Header(..., alias="Authorization"),
+        db: AsyncSession = Depends(get_db)
+):
+    # Bearer xxxxx 
+    # 1. 获取 token
+    token = authorization.replace("Bearer ", "") # token = authorization.split(" ")[1]
+    # 2. 根据 token 获取用户
+    user = await users_crud.get_user_by_token(db, token)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="无效的令牌或已经过期的令牌")
+    return user
+```
 
 ### 4. 用户信息更新
 - 接口地址：`PUT /api/user/info`
