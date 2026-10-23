@@ -15,7 +15,7 @@ app/
 
 #### 2. 编写独立路由模块
 /routers/users.py
-```
+```python
 from fastapi import APIRouter
 
 router = APIRouter(prefix="api/user", tags=["user"]) # tags 是接口文档分组
@@ -27,7 +27,7 @@ async  def get_user_info():
 
 #### 3. 在 main.py 中挂载路由
 /main.py
-```
+```python
 app.include_router(users.router)
 ```
 
