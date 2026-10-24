@@ -1,4 +1,10 @@
-## 数据库模型层（SQLAlchemy ORM）
+
+## 数据库
+- 数据库配置：/config/
+- 数据模型层: /models/ （SQLAlchemy ORM）
+- 数据操作层: /crud/ 
+
+## MySQL
 ### 1. 建库
 database.sql (Pycharm -> 右键 localhost -> SQL脚本 -> 运行SQL脚本)
 
@@ -12,7 +18,6 @@ uv add sqlalchemy[asyncio] aiomysql
 1. `create_async_engine` 创建异步引擎
 2. 定义模型基类（继承 `DeclarativeBase`）和模型类
 3. `run_sync(Base.metadata.create_all)`建表
-
 
 ### 3. 操作数据
 1. 路由处理函数注入数据库会话依赖项 Depends

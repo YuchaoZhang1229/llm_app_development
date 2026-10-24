@@ -80,7 +80,21 @@ async def update_user(db: AsyncSession, username: str, user_data: UserUpdateRequ
     await db.refresh(user)
     return user
 
+# 更新用户密码
+async def update_password(db: AsyncSession, username: str, password: str):
+    # 先确认用户存在，避免依赖 rowcount 的不可靠行为
+    user = await get_user_by_username(db, username)
+    if user is None:
+        return None
 
+    # 加密新密码
+    hashed_password = security.get_password_hash(password)
+    # 更新密码
+    query = update(User).where(User.username == username).values(password=hashed_password)
+    await db.execute(query)
+    await db.commit()
+    await db.refresh(user)
+    return user
 
 if __name__ == "__main__":
     import asyncio

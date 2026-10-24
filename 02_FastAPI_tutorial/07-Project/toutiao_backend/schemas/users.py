@@ -16,9 +16,9 @@ class UserUpdateRequest(BaseModel):
     bio: str | None = Field(None, max_length=500, description="个人简介")
     phone: str | None = Field(None, max_length=20, description="手机号")
 
-    model_config = ConfigDict(
-        from_attributes=True,  # 允许从 ORM 对象属性中取值
-    )
+class UserUpdatePasswordRequest(BaseModel):
+    oldPassword: str = Field(..., max_length=255, description = "旧密码")
+    newPassword: str = Field(..., max_length=255, description = "新密码")
 
 class UserInfoResponse(BaseModel):
     id: int

@@ -4,6 +4,11 @@ GET http://127.0.0.1:8000/
 Accept: application/json
 ###
 
-GET http://127.0.0.1:8000/hello/User
+POST http://127.0.0.1:8000/api//user/register
+Content-Type: application/json
 Accept: application/json
-###
+
+{
+  "username": "aaaa",
+  "password": "larval"
+}

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from config.db_conf import get_db
 from models.users import User
-from schemas.users import UserRequest, UserUpdateRequest, UserAuthResponse, UserInfoResponse
+from schemas.users import UserRequest, UserUpdateRequest, UserUpdatePasswordRequest, UserAuthResponse, UserInfoResponse
 from crud import users as user_crud
 from utils.response import success_response
 from utils.security import verify_password
@@ -61,5 +61,10 @@ async def update_user_info(user_data: UserUpdateRequest, user: User = Depends(ge
 
 # 修改用户密码
 @router.put("/password")
-async def update_user_password(user: User= Depends(get_current_user)):
+async def update_user_password(user_data: UserUpdatePasswordRequest, user: User= Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    # 修改用户密码逻辑：验证旧密码 -> 更新密码（加密新密码 + 更新）
+    if not verify_password(user_data.oldPassword, user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="旧密码错误")
+    if not await user_crud.update_password(db, user.username, user_data.newPassword):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="修改密码失败")
     return success_response(message="密码修改成功", data=None)
