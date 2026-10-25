@@ -41,4 +41,4 @@ FastAPI：不需要深入底层源码，但必须熟练掌握路由、依赖注�
 
 ![img.png](img.png)
 
-![img_1.png](img_1.png)
+![img_1.png](../../02_FastAPI_tutorial/08-资料/FastAPI%20最小必会知识点.png)
