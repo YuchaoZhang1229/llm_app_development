@@ -1,3 +1,10 @@
+"""
+密码加密与校验：passlib[bcrypt], 永远不要明文存储密码
+- 密码加密：get_password_hash
+- 密码校验：verify_password
+
+"""
+
 from passlib.context import CryptContext
 
 # 创建加密上下问

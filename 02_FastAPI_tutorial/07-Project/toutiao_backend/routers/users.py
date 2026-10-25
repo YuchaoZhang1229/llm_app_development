@@ -5,8 +5,7 @@ from models.users import User
 from schemas.users import UserRequest, UserUpdateRequest, UserUpdatePasswordRequest, UserAuthResponse, UserInfoResponse
 from crud import users as user_crud
 from utils.response import success_response
-from utils.security import verify_password
-from utils.auth import get_current_user
+from utils import auth
 
 # 接口实现流程
 # 1. 模块化路由 → API接口规范文档
@@ -37,7 +36,7 @@ async def user_register(user_data: UserRequest, db: AsyncSession = Depends(get_d
 async def user_login(user_data: UserRequest, db: AsyncSession = Depends(get_db)):
     # 用户登录逻辑：通过 username 验证用户是否存在并验证密码 -> 生成 Token -> 响应结果（token+user_info）
     existing_user = await user_crud.get_user_by_username(db, user_data.username)
-    if existing_user and verify_password(user_data.password, existing_user.password):
+    if existing_user and auth.verify_password(user_data.password, existing_user.password):
         token = await user_crud.create_token(db, existing_user.id)
         response_data = UserAuthResponse(token=token, userInfo=UserInfoResponse.model_validate(existing_user))
         return success_response(message="用户登录成功", data=response_data)
@@ -46,13 +45,13 @@ async def user_login(user_data: UserRequest, db: AsyncSession = Depends(get_db))
 
 # 获取用户信息
 @router.get("/info")
-async def get_user_info(user: User = Depends(get_current_user)):
+async def get_user_info(user: User = Depends(auth.get_current_user)):
     # 获取用户信息逻辑：根据 Token 查询用户 (检查 Token 是否过期，查询对应用户) -> 依赖注入方式导入路由
     return success_response(message="获取用户信息成功", data=UserInfoResponse.model_validate(user))
 
 # 更新用户信息
 @router.put("/update")
-async def update_user_info(user_data: UserUpdateRequest, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+async def update_user_info(user_data: UserUpdateRequest, user: User = Depends(auth.get_current_user), db: AsyncSession = Depends(get_db)):
     # 更新用户信息逻辑：根据 username 更新用户信息 -> 检查是否命中 -> 获取更新后的用户 -> 响应结果
     user = await user_crud.update_user(db, user.username, user_data)
     if not user:
@@ -61,9 +60,9 @@ async def update_user_info(user_data: UserUpdateRequest, user: User = Depends(ge
 
 # 修改用户密码
 @router.put("/password")
-async def update_user_password(user_data: UserUpdatePasswordRequest, user: User= Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+async def update_user_password(user_data: UserUpdatePasswordRequest, user: User= Depends(auth.get_current_user), db: AsyncSession = Depends(get_db)):
     # 修改用户密码逻辑：验证旧密码 -> 更新密码（加密新密码 + 更新）
-    if not verify_password(user_data.oldPassword, user.password):
+    if not auth.verify_password(user_data.oldPassword, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="旧密码错误")
     if not await user_crud.update_password(db, user.username, user_data.newPassword):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="修改密码失败")

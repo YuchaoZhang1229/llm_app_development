@@ -1,11 +1,10 @@
 import uuid
 from datetime import timedelta, datetime
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from models.users import User, UserToken
 from schemas.users import UserRequest, UserUpdateRequest
-from utils import security
+from utils import auth
 
 
 # 根据 username 查询用户
@@ -17,7 +16,7 @@ async def get_user_by_username(db: AsyncSession, username: str):
 # 创建用户
 async def create_user(db: AsyncSession, user_data: UserRequest):
     # 密码加密处理 -> 存入数据库 user
-    hashed_password = security.get_password_hash(user_data.password)
+    hashed_password = auth.get_password_hash(user_data.password)
     user = User(username=user_data.username, password=hashed_password)
     db.add(user)
     await db.commit()
@@ -88,7 +87,7 @@ async def update_password(db: AsyncSession, username: str, password: str):
         return None
 
     # 加密新密码
-    hashed_password = security.get_password_hash(password)
+    hashed_password = auth.get_password_hash(password)
     # 更新密码
     query = update(User).where(User.username == username).values(password=hashed_password)
     await db.execute(query)

@@ -25,3 +25,42 @@ uv add sqlalchemy[asyncio] aiomysql
 3. 增加数据：add()
 4. 更新数据：重新赋值
 5. 删除数据：delete()
+
+## Redis
+- 高性能的 `Key-Value 存储系统`
+- 数据存储在`内存`中，因此读写速度极快
+
+缓存、击穿、雪崩、穿透、数据一致性
+
+### 1. 本地安装 Redis 服务端
+- 下载 Redis 安装包并解压
+- 运行 Redis 服务端：`redis-server.exe`
+
+### 2. 配置 Redis 客户端
+安装
+```
+uv add redis
+```
+
+配置 Redis 客户端
+```
+import redis.asyncio as redis
+redis_client = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+```
+
+### 3. 封装缓存操作
+缓存操作就是围绕 Redis 做 "存、取、删、判断、过期"等操作
+
+Redis 存储数据：Key-Value
+
+| 方法 | 参数 | 描述 |
+| :--- | :--- | :--- |
+| `setex` | `key: str`,<br>`expire: int（秒）`,<br>`value: str` | 设置缓存并指定过期时间（秒） |
+| `get` | `key: str` | 获取缓存值。若缓存不存在，返回 `None` |
+| `delete` | `key: str` | 删除指定的缓存键 |
+| `exists` | `key: str` | 检查缓存键是否存在，返回布尔值 |
+
+### 4. 设计缓存策略
+最常见的策略 - 旁路策略
+- 读：先查缓存，有数据则返回，没有数据则查询数据库
+- 写：更新数据库后，更新或删除缓存数据
