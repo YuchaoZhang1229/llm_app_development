@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Security
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 from passlib.context import CryptContext
@@ -61,7 +61,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # ---------- 认证依赖 ----------
-def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
+def get_current_user(token: str = Security(oauth2_scheme)) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="无效的认证凭证",
@@ -118,7 +118,7 @@ def require_permissions(*required_perms: str, require_all: bool = True):
 app = FastAPI()
 
 @app.post("/auth/login", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
+def login(form_data: OAuth2PasswordRequestForm = Security()):
     user_dict = fake_users_db.get(form_data.username)
     if not user_dict or not verify_password(form_data.password, user_dict["hashed_password"]):
         raise HTTPException(
@@ -147,4 +147,4 @@ def delete_task(task_id: int, user: User = Depends(require_roles("admin"))):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("jwt认证:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("jwt认证:app", host="127.0.0.2", port=8000, reload=True)
