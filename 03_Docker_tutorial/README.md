@@ -33,4 +33,6 @@ redis/redis-stack:latest     # 镜像名称和标签
 - 浏览器可以打开 `http://localhost:8001` 使用 RedisInsight 管理数据。
 
 ## 三、基于 Docker 部署 FastGPT
+源码位置：https://github.com/1abring/FastGPT
+
 https://doc.fastgpt.cn/zh-CN/self-host/deploy/docker
